@@ -1,93 +1,52 @@
 package presentation.ui.homescreen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.key.Key.Companion.R
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.resources.stringResource
-import presentation.ui.popularvideoscreen.PopularMovieScreen
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.Navigator
+import presentation.ui.offlinemoviescreen.OffLineMovieScreen
+import presentation.ui.onlinemoviescreen.OnlineMoviesScreen
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun HomeScreen(navController: NavHostController) {
+class HomeScreen:Screen {
+    @Composable
+    override fun Content() {
+        Navigator(HomeScreen()) {
+            Scaffold(bottomBar = {
+                BottomNavigationBar(it)
+            }, topBar = {
 
-//    val movieListViewModel = hiltViewModel<MovieListViewModel>()
-    val movieListState = movieListViewModel.movieListState.collectAsState().value
-    val bottomNavController = rememberNavController()
+            }){
 
-    Scaffold(bottomBar = {
-        BottomNavigationBar(
-            bottomNavController = bottomNavController, onEvent = movieListViewModel::onEvent
-        )
-    }, topBar = {
-        TopAppBar(
-            title = {
-                Text(
-                    text = if (movieListState.isCurrentPopularScreen) stringResource(R.string.popular_movies)
-                    else stringResource(R.string.upcoming_movies), fontSize = 20.sp
-                )
-            },
-            modifier = Modifier.shadow(2.dp),
-//            colors = TopAppBarDefaults.smallTopAppBarColors(
-//                MaterialTheme.colorScheme.inverseOnSurface
-//            )
-        )
-    }) {
-        Box(
-            modifier = Modifier.fillMaxSize().padding(it)
-        ) {
-            NavHost(
-                navController = bottomNavController, startDestination = Screen.PopularMovieList.rout
-            ) {
-                composable(Screen.PopularMovieList.rout) {
-                    PopularMovieScreen(
-                        navController = navController,
-                        movieListState = movieListState,
-                        onEvent = movieListViewModel::onEvent
-                    )
-                }
-//                composable(Screen.UpcomingMovieList.rout) {
-//                    UpcomingMoviesScreen(
-//                        navController = navController,
-//                        movieListState = movieListState,
-//                        onEvent = movieListViewModel::onEvent
-//                    )
-//                }
             }
         }
     }
-
 }
-
 
 @Composable
 fun BottomNavigationBar(
-    bottomNavController: NavHostController, onEvent: (MovieListUiEvent) -> Unit
+    navigator: Navigator,
 ) {
-
     val items = listOf(
         BottomItem(
-            title = stringResource(R.string.popular), icon = Icons.Rounded.Movie
+            title = "Online",
+            icon = Icons.Rounded.Home
         ), BottomItem(
-            title = stringResource(R.string.upcoming), icon = Icons.Rounded.Upcoming
+            title = "Offline",
+            icon = Icons.Rounded.Favorite
         )
     )
 
@@ -103,28 +62,25 @@ fun BottomNavigationBar(
                 NavigationBarItem(selected = selected.intValue == index, onClick = {
                     selected.intValue = index
                     when (selected.intValue) {
-                        0 -> {
-                            onEvent(MovieListUiEvent.Navigate)
-                            bottomNavController.popBackStack()
-                            bottomNavController.navigate(Screen.PopularMovieList.rout)
+                        0 ->  {
+                            navigator.pop()
+                            navigator.push(OffLineMovieScreen())
                         }
 
                         1 -> {
-                            onEvent(MovieListUiEvent.Navigate)
-                            bottomNavController.popBackStack()
-                            bottomNavController.navigate(Screen.UpcomingMovieList.rout)
+                            navigator.pop()
+                            navigator.push(OnlineMoviesScreen())
                         }
                     }
                 }, icon = {
                     Icon(
                         imageVector = bottomItem.icon,
                         contentDescription = bottomItem.title,
-//                        tint = MaterialTheme.colorScheme.onBackground
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }, label = {
                     Text(
-                        text = bottomItem.title,
-//                        color = MaterialTheme.colorScheme.onBackground
+                        text = bottomItem.title, color = MaterialTheme.colorScheme.onBackground
                     )
                 })
             }

@@ -1,9 +1,8 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    id("de.jensklingenberg.ktorfit") version "1.12.0"
 }
 
 kotlin {
@@ -14,32 +13,25 @@ kotlin {
             }
         }
     }
-    
+
     listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
+        iosX64(), iosArm64(), iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
         }
     }
-    
+
     sourceSets {
-        
+
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
-            implementation("androidx.navigation:navigation-compose:2.7.5")
-            // Retrofit
-            implementation("com.squareup.retrofit2:retrofit:2.9.0")
-            implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-            implementation("com.squareup.okhttp3:okhttp:4.11.0")
-            implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
             // Coil
             implementation("io.coil-kt:coil-compose:2.4.0")
+            implementation(libs.androidx.navigation.compose)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -48,6 +40,16 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.bottomSheetNavigator)
+            implementation(libs.voyager.transitions)
+            implementation(libs.voyager.tabNavigator)
+            implementation(libs.voyager.koin)
+            implementation("de.jensklingenberg.ktorfit:ktorfit-lib:1.12.0")
+            implementation("io.ktor:ktor-client-serialization:2.3.6")
+            implementation("io.ktor:ktor-client-content-negotiation:2.3.6")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.6")
+            api("dev.icerock.moko:mvvm-core:0.13.1")
         }
     }
 }
@@ -84,8 +86,5 @@ android {
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
     }
-}
-dependencies {
-    implementation(libs.androidx.navigation.runtime.ktx)
 }
 
