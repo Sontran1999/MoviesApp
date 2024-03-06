@@ -1,35 +1,58 @@
-package presentation.ui.homescreen
+package presentation.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
-import presentation.ui.offlinemoviescreen.OffLineMovieScreen
-import presentation.ui.onlinemoviescreen.OnlineMoviesScreen
+import presentation.ui.offline.OffLineMovieScreen
+import presentation.ui.online.OnlineMoviesScreen
 
-class HomeScreen:Screen {
+class HomeScreen(private val movieListViewModel: HomeViewModel) : Screen {
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        Navigator(HomeScreen()) {
+        val movieListState = movieListViewModel.movieListState.collectAsState().value
+        Navigator(OnlineMoviesScreen(movieListState)) {
             Scaffold(bottomBar = {
-                BottomNavigationBar(it)
+                BottomNavigationBar(it, movieListState)
             }, topBar = {
-
-            }){
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = if (movieListState.isCurrentOnlineScreen)
+                                "Online"
+                            else
+                                "Offline",
+                            fontSize = 20.sp
+                        )
+                    },
+                    modifier = Modifier.shadow(2.dp),
+                    colors = TopAppBarDefaults.smallTopAppBarColors(
+                        MaterialTheme.colorScheme.inverseOnSurface
+                    )
+                )
+            }) {
 
             }
         }
@@ -39,6 +62,7 @@ class HomeScreen:Screen {
 @Composable
 fun BottomNavigationBar(
     navigator: Navigator,
+    movieListState: MovieListState,
 ) {
     val items = listOf(
         BottomItem(
@@ -62,14 +86,14 @@ fun BottomNavigationBar(
                 NavigationBarItem(selected = selected.intValue == index, onClick = {
                     selected.intValue = index
                     when (selected.intValue) {
-                        0 ->  {
+                        0 -> {
                             navigator.pop()
-                            navigator.push(OffLineMovieScreen())
+                            navigator.push(OnlineMoviesScreen(movieListState))
                         }
 
                         1 -> {
                             navigator.pop()
-                            navigator.push(OnlineMoviesScreen())
+                            navigator.push(OffLineMovieScreen())
                         }
                     }
                 }, icon = {

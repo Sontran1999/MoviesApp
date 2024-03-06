@@ -1,6 +1,5 @@
-package presentation.ui.onlinemoviescreen
+package presentation.ui.online
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,8 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
@@ -28,39 +26,43 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key.Companion.R
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import data.model.Video
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
+import presentation.ui.home.MovieListState
 
-class OnlineMoviesScreen: Screen {
+class OnlineMoviesScreen(private val movieListState: MovieListState) : Screen {
     @Composable
     override fun Content() {
-        MovieScreen()
+        MovieScreen(movieListState)
     }
 
 }
+
 @Composable
 fun MovieScreen(
-//    movieListState: MovieListState,
+    movieListState: MovieListState,
 ) {
 
-    if (movieListState.popularMovieList.isEmpty()) {
+    if (movieListState.onlineMovieList.isEmpty()) {
         Box(
             modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
         ) {
             LoadingScreen()
         }
     } else {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+        LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(vertical = 8.dp, horizontal = 4.dp)
         ) {
-            items(movieListState.popularMovieList.size) { index ->
+            items(movieListState.onlineMovieList.size) { index ->
+                VideoItemCard(movieListState.onlineMovieList[index]) {
+
+                }
             }
         }
     }
@@ -104,8 +106,8 @@ fun VideoItemCard(video: Video, onItemClick: (String) -> Unit) {
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            Image(
-                painter = painterResource(resource = R.drawable.ic_launcher_foreground), // Use your own image loading logic
+            KamelImage(
+                resource = asyncPainterResource(data = video.videoPictures[0].picture),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -119,7 +121,7 @@ fun VideoItemCard(video: Video, onItemClick: (String) -> Unit) {
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "video.user",
+                    text = video.user.name,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
 

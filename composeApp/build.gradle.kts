@@ -28,10 +28,8 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
-
-            // Coil
-            implementation("io.coil-kt:coil-compose:2.4.0")
             implementation(libs.androidx.navigation.compose)
+            implementation("io.insert-koin:koin-androidx-compose:3.1.2")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -50,6 +48,9 @@ kotlin {
             implementation("io.ktor:ktor-client-content-negotiation:2.3.6")
             implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.6")
             api("dev.icerock.moko:mvvm-core:0.13.1")
+            implementation("media.kamel:kamel-image:0.9.3")
+            implementation ("io.insert-koin:koin-core:3.1.4")
+
         }
     }
 }

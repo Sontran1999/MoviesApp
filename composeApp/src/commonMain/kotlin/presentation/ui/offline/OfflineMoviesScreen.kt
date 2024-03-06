@@ -1,4 +1,4 @@
-package presentation.ui.offlinemoviescreen
+package presentation.ui.offline
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen

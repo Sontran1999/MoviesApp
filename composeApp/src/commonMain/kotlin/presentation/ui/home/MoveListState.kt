@@ -1,14 +1,14 @@
-package presentation.ui.homescreen
+package presentation.ui.home
 
 import data.model.Video
 
 data class MovieListState(
     val isLoading: Boolean = false,
 
-    val popularMovieListPage: Int = 1,
-    val upcomingMovieListPage: Int = 1,
+    val onlineMovieListPage: Int = 1,
+    val offlineMovieListPage: Int = 1,
 
-    val isCurrentPopularScreen: Boolean = true,
+    val isCurrentOnlineScreen: Boolean = true,
 
     val onlineMovieList: List<Video> = emptyList(),
     val offlineMovieList: List<Video> = emptyList(),
