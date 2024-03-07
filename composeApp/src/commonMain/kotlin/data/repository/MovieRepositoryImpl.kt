@@ -10,6 +10,8 @@ import util.Resource
 class MovieRepositoryImpl(private val movieApiService: MovieApiService) : MovieRepository {
 
     override suspend fun getMovieList(): Flow<Resource<VideosList>> {
-        return flow { movieApiService.getAllMovies() }
+        return flow {
+            emit(Resource.Success(movieApiService.getAllMovies()))
+        }
     }
 }

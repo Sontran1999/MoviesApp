@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     id("de.jensklingenberg.ktorfit") version "1.12.0"
+    id ("org.jetbrains.kotlin.plugin.serialization") version "1.6.21"
 }
 
 kotlin {
@@ -28,8 +29,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.navigation.compose)
-            implementation("io.insert-koin:koin-androidx-compose:3.1.2")
+            implementation ("com.google.android.exoplayer:exoplayer:2.18.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -43,14 +43,16 @@ kotlin {
             implementation(libs.voyager.transitions)
             implementation(libs.voyager.tabNavigator)
             implementation(libs.voyager.koin)
+            //ktor
             implementation("de.jensklingenberg.ktorfit:ktorfit-lib:1.12.0")
             implementation("io.ktor:ktor-client-serialization:2.3.6")
             implementation("io.ktor:ktor-client-content-negotiation:2.3.6")
             implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.6")
-            api("dev.icerock.moko:mvvm-core:0.13.1")
+            //image
             implementation("media.kamel:kamel-image:0.9.3")
-            implementation ("io.insert-koin:koin-core:3.1.4")
-
+            //koin
+            implementation ("io.insert-koin:koin-core:3.5.3")
+            implementation("io.insert-koin:koin-android:3.5.3")
         }
     }
 }

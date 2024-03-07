@@ -1,3 +1,5 @@
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import org.koin.core.module.Module
 
 interface Platform {
@@ -5,4 +7,6 @@ interface Platform {
 }
 
 expect fun getPlatform(): Platform
-expect fun platformModule(): Module
+
+@Composable
+expect fun VideoPlayer(url: String)

@@ -16,6 +16,7 @@ junit = "4.13.2"
 kotlin = "1.9.22"
 navigationCompose = "2.7.7"
 voyager ="1.0.0-rc10"
+media3Common = "1.2.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -37,6 +38,7 @@ voyager-navigator = { module ="cafe.adriel.voyager:voyager-navigator", version.r
 voyager-bottomSheetNavigator = { module ="cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref ="voyager" }
 voyager-tabNavigator = { module ="cafe.adriel.voyager:voyager-tab-navigator", version.ref ="voyager" }
 voyager-transitions = { module ="cafe.adriel.voyager:voyager-transitions", version.ref ="voyager" }
+androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3Common" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

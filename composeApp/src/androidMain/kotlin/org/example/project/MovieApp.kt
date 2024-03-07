@@ -4,7 +4,6 @@ import android.app.Application
 import di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import platformModule
 
 class MovieApp : Application() {
     override fun onCreate() {
@@ -13,7 +12,6 @@ class MovieApp : Application() {
             androidContext(this@MovieApp)
             modules(
                 appModule(),
-                platformModule()
             )
         }
     }

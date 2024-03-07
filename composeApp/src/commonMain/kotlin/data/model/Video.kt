@@ -1,22 +1,24 @@
 package data.model
 
-import kotlinx.serialization.json.JsonNames
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Video(
     val id: Long,
     val width: Long,
     val height: Long,
     val duration: Long,
-    @JsonNames("full_res")
-    val fullRes: Any?,
-    val tags: List<Any?>,
+    @SerialName("full_res")
+    val fullRes: String?,
+    val tags: List<String?>,
     val url: String,
     val image: String,
-    @JsonNames("avg_color")
-    val avgColor: Any?,
+    @SerialName("avg_color")
+    val avgColor: String?,
     val user: User,
-    @JsonNames("video_files")
+    @SerialName("video_files")
     val videoFiles: List<VideoFile>,
-    @JsonNames("video_pictures")
+    @SerialName("video_pictures")
     val videoPictures: List<VideoPicture>,
 )

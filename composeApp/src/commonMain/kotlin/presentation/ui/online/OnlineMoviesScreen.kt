@@ -24,31 +24,39 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.getScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import data.model.Video
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import presentation.ui.home.MovieListState
+import presentation.video.VideoScreen
 
-class OnlineMoviesScreen(private val movieListState: MovieListState) : Screen {
+class OnlineMoviesScreen() : Screen {
     @Composable
     override fun Content() {
-        MovieScreen(movieListState)
+        val navigator = LocalNavigator.currentOrThrow
+        val onlineMovieViewModel = getScreenModel<OnlineMovieViewModel>()
+        val onlineMovieState = onlineMovieViewModel.onlineMovieState.collectAsState().value
+        MovieScreen(onlineMovieState, navigator)
     }
 
 }
 
 @Composable
 fun MovieScreen(
-    movieListState: MovieListState,
+    onlineMovieState: OnlineMovieState,
+    navigator: Navigator,
 ) {
-
-    if (movieListState.onlineMovieList.isEmpty()) {
+    if (onlineMovieState.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
         ) {
@@ -59,14 +67,13 @@ fun MovieScreen(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(vertical = 8.dp, horizontal = 4.dp)
         ) {
-            items(movieListState.onlineMovieList.size) { index ->
-                VideoItemCard(movieListState.onlineMovieList[index]) {
-
+            items(onlineMovieState.onlineMovieList.size) { index ->
+                VideoItemCard(onlineMovieState.onlineMovieList[index]) {
+                    navigator.push(VideoScreen(it))
                 }
             }
         }
     }
-
 }
 
 @Composable
@@ -91,7 +98,6 @@ fun LoadingScreen(
 
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun VideoItemCard(video: Video, onItemClick: (String) -> Unit) {
     Card(
@@ -99,12 +105,12 @@ fun VideoItemCard(video: Video, onItemClick: (String) -> Unit) {
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(16.dp)
-            .clickable { onItemClick(video.url) },
+            .clickable { onItemClick(video.videoFiles[0].link) },
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
+                .background(Color.LightGray)
         ) {
             KamelImage(
                 resource = asyncPainterResource(data = video.videoPictures[0].picture),

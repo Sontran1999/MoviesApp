@@ -1,7 +1,9 @@
 package data.model
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class VideoFile(
     val id: Long,
     val quality: String,
