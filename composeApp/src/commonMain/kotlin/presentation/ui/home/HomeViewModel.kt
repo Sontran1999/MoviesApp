@@ -16,4 +16,12 @@ class HomeViewModel : ScreenModel {
             )
         }
     }
+
+    fun changeStateAppBar(){
+        _homeState.update {
+            it.copy(
+                isVisibleAppBar = !it.isVisibleAppBar
+            )
+        }
+    }
 }

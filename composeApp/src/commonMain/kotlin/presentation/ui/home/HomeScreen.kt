@@ -1,5 +1,6 @@
 package presentation.ui.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -28,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
+import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
-import presentation.ui.offline.OffLineMovieScreen
 import presentation.ui.online.OnlineMoviesScreen
 
 class HomeScreen : Screen {
@@ -38,29 +39,35 @@ class HomeScreen : Screen {
     override fun Content() {
         val homeViewModel = getScreenModel<HomeViewModel>()
         val homeState = homeViewModel.homeState.collectAsState().value
-        Navigator(HomeScreen()) { navigator ->
+        Navigator(OnlineMoviesScreen(){
+            homeViewModel.changeStateAppBar()
+        }) { navigator ->
             Scaffold(bottomBar = {
-                BottomNavigationBar(navigator, homeViewModel)
+                AnimatedVisibility(visible = homeState.isVisibleAppBar) {
+                    BottomNavigationBar(navigator, homeViewModel)
+                }
             }, topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = if (homeState.isCurrentOnlineScreen)
-                                "Online"
-                            else
-                                "Offline",
-                            fontSize = 20.sp
+                AnimatedVisibility(visible = homeState.isVisibleAppBar) {
+                    TopAppBar(
+                        title = {
+                            Text(
+                                text = if (homeState.isCurrentOnlineScreen)
+                                    "Online"
+                                else
+                                    "Offline",
+                                fontSize = 20.sp
+                            )
+                        },
+                        modifier = Modifier.shadow(2.dp),
+                        colors = TopAppBarDefaults.smallTopAppBarColors(
+                            MaterialTheme.colorScheme.inverseOnSurface
                         )
-                    },
-                    modifier = Modifier.shadow(2.dp),
-                    colors = TopAppBarDefaults.smallTopAppBarColors(
-                        MaterialTheme.colorScheme.inverseOnSurface
                     )
-                )
+                }
             }) {
                 Box(
                     modifier = Modifier.fillMaxSize().padding(it)
-                ) { Navigator(OnlineMoviesScreen()) }
+                ) { CurrentScreen() }
             }
         }
     }
@@ -93,13 +100,15 @@ fun BottomNavigationBar(
                     when (selected.intValue) {
                         0 -> {
                             navigator.pop()
-                            navigator.push(OnlineMoviesScreen())
+                            navigator.push(OnlineMoviesScreen(){
+                                homeViewModel.changeStateAppBar()
+                            })
                             homeViewModel.changePage(true)
                         }
 
                         1 -> {
                             navigator.pop()
-                            navigator.push(OffLineMovieScreen())
+//                            navigator.push(OffLineMovieScreen())
                             homeViewModel.changePage(false)
                         }
                     }

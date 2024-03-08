@@ -2,6 +2,7 @@ import android.net.Uri
 import android.os.Build
 import android.widget.MediaController
 import android.widget.VideoView
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
@@ -32,7 +33,7 @@ actual fun VideoPlayer(url: String) {
     playerView.player = exoPlayer
 
     DisposableEffect(
-        AndroidView(modifier = Modifier.fillMaxWidth().height(400.dp),
+        AndroidView(modifier = Modifier.fillMaxSize(),
             factory = {playerView})
     ){
 
@@ -43,6 +44,8 @@ actual fun VideoPlayer(url: String) {
             exoPlayer.release()
         }
     }
+
+
 
 //    AndroidView(
 //        modifier = Modifier.fillMaxWidth().height(400.dp),

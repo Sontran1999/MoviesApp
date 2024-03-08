@@ -10,10 +10,6 @@ import util.pathUrl
 
 class MovieApiService(private val httpClient: HttpClient) {
     suspend fun getAllMovies(): VideosList = httpClient.get {
-        headers {
-            append(HttpHeaders.Accept, "application/json")
-            append(HttpHeaders.ContentType, "text/plain")
-        }
         this.pathUrl("/popular")
     }.body()
 }
