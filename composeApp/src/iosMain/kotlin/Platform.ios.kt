@@ -1,5 +1,4 @@
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import platform.UIKit.UIDevice
 
 class IOSPlatform : Platform {
@@ -12,4 +11,9 @@ actual fun getPlatform(): Platform = IOSPlatform()
 @Composable
 actual fun VideoPlayer(url: String) {
     // Platform-specific implementation here
+}
+
+@Composable
+actual fun getVideoFromMediaStore(): String? {
+    return null
 }

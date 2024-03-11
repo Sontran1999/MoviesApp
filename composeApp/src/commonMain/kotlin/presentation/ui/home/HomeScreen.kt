@@ -31,6 +31,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
+import presentation.ui.offline.OffLineMovieScreen
 import presentation.ui.online.OnlineMoviesScreen
 
 class HomeScreen : Screen {
@@ -39,9 +40,7 @@ class HomeScreen : Screen {
     override fun Content() {
         val homeViewModel = getScreenModel<HomeViewModel>()
         val homeState = homeViewModel.homeState.collectAsState().value
-        Navigator(OnlineMoviesScreen(){
-            homeViewModel.changeStateAppBar()
-        }) { navigator ->
+        Navigator(OnlineMoviesScreen()) { navigator ->
             Scaffold(bottomBar = {
                 AnimatedVisibility(visible = homeState.isVisibleAppBar) {
                     BottomNavigationBar(navigator, homeViewModel)
@@ -51,11 +50,8 @@ class HomeScreen : Screen {
                     TopAppBar(
                         title = {
                             Text(
-                                text = if (homeState.isCurrentOnlineScreen)
-                                    "Online"
-                                else
-                                    "Offline",
-                                fontSize = 20.sp
+                                text = if (homeState.isCurrentOnlineScreen) "Online"
+                                else "Offline", fontSize = 20.sp
                             )
                         },
                         modifier = Modifier.shadow(2.dp),
@@ -100,15 +96,13 @@ fun BottomNavigationBar(
                     when (selected.intValue) {
                         0 -> {
                             navigator.pop()
-                            navigator.push(OnlineMoviesScreen(){
-                                homeViewModel.changeStateAppBar()
-                            })
+                            navigator.push(OnlineMoviesScreen())
                             homeViewModel.changePage(true)
                         }
 
                         1 -> {
                             navigator.pop()
-//                            navigator.push(OffLineMovieScreen())
+                            navigator.push(OffLineMovieScreen())
                             homeViewModel.changePage(false)
                         }
                     }

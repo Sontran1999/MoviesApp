@@ -10,3 +10,6 @@ expect fun getPlatform(): Platform
 
 @Composable
 expect fun VideoPlayer(url: String)
+
+@Composable
+expect fun getVideoFromMediaStore(): String?

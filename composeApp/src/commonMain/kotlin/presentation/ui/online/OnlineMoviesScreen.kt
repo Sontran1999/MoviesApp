@@ -40,13 +40,13 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import presentation.video.VideoScreen
 
-class OnlineMoviesScreen(private val onItemClick: () -> Unit) : Screen {
+class OnlineMoviesScreen : Screen {
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
+        val navigator = LocalNavigator.currentOrThrow.parent
         val onlineMovieViewModel = getScreenModel<OnlineMovieViewModel>()
         val onlineMovieState = onlineMovieViewModel.onlineMovieState.collectAsState().value
-        MovieScreen(onlineMovieState, navigator, onItemClick)
+        MovieScreen(onlineMovieState, navigator)
     }
 
 }
@@ -54,8 +54,7 @@ class OnlineMoviesScreen(private val onItemClick: () -> Unit) : Screen {
 @Composable
 fun MovieScreen(
     onlineMovieState: OnlineMovieState,
-    navigator: Navigator,
-    onItemClick: () -> Unit
+    navigator: Navigator?,
 ) {
     if (onlineMovieState.isLoading) {
         Box(
@@ -70,8 +69,7 @@ fun MovieScreen(
         ) {
             items(onlineMovieState.onlineMovieList.size) { index ->
                 VideoItemCard(onlineMovieState.onlineMovieList[index]) {
-                    onItemClick()
-                    navigator.push(VideoScreen(it))
+                    navigator?.push(VideoScreen(it))
                 }
             }
         }
