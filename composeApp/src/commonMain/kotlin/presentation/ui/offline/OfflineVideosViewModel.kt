@@ -1,8 +1,8 @@
-package presentation.ui.online
+package presentation.ui.offline
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-import domain.usecase.GetMovies
+import domain.usecase.GetVideosOffline
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -10,24 +10,23 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import util.Resource
 
-class OnlineMovieViewModel(private val getMovies: GetMovies) : ScreenModel {
-    private var _onlineMovieState = MutableStateFlow(OnlineMovieState())
-    val onlineMovieState = _onlineMovieState.asStateFlow()
+class OfflineVideosViewModel(private val getVideosOffline: GetVideosOffline) : ScreenModel {
+    private var _offlineVideoState = MutableStateFlow(OfflineVideoState())
+    val offlineMovieState = _offlineVideoState.asStateFlow()
 
     init {
-        loadMovies()
+        loadOfflineVideos()
     }
-
-    private fun loadMovies() {
+    private fun loadOfflineVideos() {
         screenModelScope.launch {
-            _onlineMovieState.update { it.copy(isLoading = true) }
-            getMovies().collectLatest { result ->
+            _offlineVideoState.update { it.copy(isLoading = true) }
+            getVideosOffline().collectLatest { result ->
                 when (result) {
                     is Resource.Success -> {
                         result.data?.let { videoList ->
-                            _onlineMovieState.update {
+                            _offlineVideoState.update {
                                 it.copy(
-                                    onlineMovieList = videoList.videos ?: listOf(),
+                                    offlineMovieList = videoList,
                                     isLoading = false
                                 )
                             }
@@ -35,20 +34,19 @@ class OnlineMovieViewModel(private val getMovies: GetMovies) : ScreenModel {
                     }
 
                     is Resource.Error -> {
-                        _onlineMovieState.update {
+                        _offlineVideoState.update {
                             it.copy(isLoading = false)
                         }
 
                     }
 
                     is Resource.Loading -> {
-                        _onlineMovieState.update {
+                        _offlineVideoState.update {
                             it.copy(isLoading = result.isLoading)
                         }
                     }
                 }
             }
-
         }
     }
 }

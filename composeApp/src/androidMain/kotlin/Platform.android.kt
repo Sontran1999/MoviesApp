@@ -1,14 +1,22 @@
+import android.annotation.SuppressLint
+import android.content.ContentUris
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Size
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.ui.PlayerView
-import org.example.project.common.ExoPlayerManager
+import common.ExoPlayerManager
+import data.source.local.model.VideoEntity
 
 class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
@@ -37,85 +45,60 @@ actual fun VideoPlayer(url: String) {
     )
 }
 
-@Composable
-actual fun getVideoFromMediaStore(): String? {
-    val context = LocalContext.current
-    val projection = arrayOf(MediaStore.Video.Media._ID, MediaStore.Video.Media.DATA)
-    val sortOrder = "${MediaStore.Video.Media.DATE_ADDED} DESC"
-
-    context.contentResolver.query(
-        MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-        projection,
-        null,
-        null,
-        sortOrder
-    )?.use { cursor ->
-        while (cursor.moveToNext()) {
-
-        }
-        if (cursor.moveToFirst()) {
-            val dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
-            return cursor.getString(dataColumn)
-        }
+actual class LocalVideoDataSource(private val context: Context) {
+    actual suspend fun getVideoList(): List<VideoEntity>? {
+        return getVideoFromMediaStore(context)
     }
 
-    return null
+    @SuppressLint("Range")
+    fun getVideoFromMediaStore(context: Context): List<VideoEntity>? {
+        val result = mutableListOf<VideoEntity>()
+        val projection = arrayOf(
+            MediaStore.MediaColumns.DATA,
+            MediaStore.Video.Media.DISPLAY_NAME,
+            MediaStore.Video.Media._ID,
+            MediaStore.Video.Media.ARTIST,
+            MediaStore.Video.Media.DURATION,
+        )
+        val sortOrder = "${MediaStore.Video.Media.DATE_ADDED} DESC"
+        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Video.Media.getContentUri(
+                MediaStore.VOLUME_EXTERNAL
+            )
+        } else {
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        }
+        context.contentResolver.query(
+            collection, projection, null, null, sortOrder
+        )?.use { cursor ->
+            while (cursor.moveToNext()) {
+                val dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
+                val id = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media._ID))
+                val imageUri = ContentUris.withAppendedId(
+                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                    id
+                )
+                result.add(
+                    VideoEntity(
+                        id = id,
+                        name = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME)),
+                        duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media.DURATION)) / 1000,
+                        url = cursor.getString(dataColumn),
+                        picture = imageUri.toString()
+                    )
+                )
+            }
+            return result
+        }
+        return null
+    }
 }
 
-//actual class LocalAudioDataSource(val appContext: Context) {
-//    private val ALBUM_ART_URL = "content://media/external/audio/albumart"
-//    actual suspend fun getAudioList(): List<LocalAudio> {
-//        return getAudioList(appContext)
-//    }
-//    @SuppressLint("Range")
-//    fun getAudioList(appContext: Context): List<LocalAudio> {
-//        val result = mutableListOf<LocalAudio>()
-//        val projections =
-//            arrayOf(
-//                MediaStore.Audio.Media._ID,
-//                MediaStore.Audio.Media.DISPLAY_NAME,
-//                MediaStore.Audio.Media.DURATION,
-//                MediaStore.Audio.Media.SIZE,
-//                MediaStore.Audio.Media.ALBUM_ID,
-//                MediaStore.Audio.Media.ARTIST
-//            )
-//        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
-//        } else {
-//            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-//        }
-//        val cursor = appContext.contentResolver.query(
-//            collection,
-//            projections,
-//            null,
-//            null,
-//            null
-//        )
-//        cursor?.use {
-//            while (it.moveToNext()) {
-//                val id = it.getLong(it.getColumnIndex(MediaStore.Audio.Media._ID))
-//                val name = it.getString(it.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
-//                val duration = it.getInt(it.getColumnIndex(MediaStore.Audio.Media.DURATION))
-//                val size = it.getInt(it.getColumnIndex(MediaStore.Audio.Media.SIZE))
-//                val albumId = it.getLong(it.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
-//                val uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)
-//                val artis = it.getString(it.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-//                val albumArtworkUri = ContentUris.withAppendedId(
-//                    Uri.parse(ALBUM_ART_URL),
-//                    albumId
-//                )
-//                result.add(
-//                    LocalAudio(
-//                        name,
-//                        uri.toString(),
-//                        albumArtworkUri.toString(),
-//                        size,
-//                        duration,
-//                        artis
-//                    )
-//                )
-//            }
-//        }
-//        return result
-//    }
-//}
+@RequiresApi(Build.VERSION_CODES.Q)
+@Composable
+actual fun getVideoThumbnail(videoUri: String): ImageBitmap? {
+    val context = LocalContext.current
+    return context.contentResolver.loadThumbnail(
+        Uri.parse(videoUri), Size(640, 480), null
+    ).asImageBitmap()
+}

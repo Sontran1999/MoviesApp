@@ -1,4 +1,4 @@
-package org.example.project.common
+package common
 
 import android.content.Context
 import androidx.media3.exoplayer.ExoPlayer
@@ -18,6 +18,7 @@ class ExoPlayerManager(context: Context) {
             return instance!!
         }
     }
+
     val exoPlayer = ExoPlayer.Builder(context).build()
     val session = MediaSession.Builder(context, exoPlayer).build()
 }

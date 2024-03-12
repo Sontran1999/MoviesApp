@@ -1,4 +1,4 @@
-package org.example.project.common
+package common
 
 import android.content.BroadcastReceiver
 import android.content.Context

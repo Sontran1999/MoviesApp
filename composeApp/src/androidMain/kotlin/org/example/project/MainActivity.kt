@@ -15,10 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import cafe.adriel.voyager.navigator.Navigator
-import org.example.project.common.ExoPlayerManager
+import common.ExoPlayerManager
 import presentation.ui.home.HomeScreen
 
 class MainActivity : ComponentActivity() {

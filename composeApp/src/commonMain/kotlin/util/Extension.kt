@@ -3,7 +3,6 @@ package util
 import data.constant.NetworkConstant
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.headers
-import io.ktor.client.request.parameter
 import io.ktor.http.HttpHeaders
 import io.ktor.http.takeFrom
 
@@ -18,3 +17,5 @@ fun HttpRequestBuilder.pathUrl(path: String) {
     }
 
 }
+
+expect fun Long.toFormattedTime(): String

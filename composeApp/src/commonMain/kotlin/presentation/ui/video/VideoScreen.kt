@@ -1,4 +1,4 @@
-package presentation.video
+package presentation.ui.video
 
 import VideoPlayer
 import androidx.compose.foundation.layout.fillMaxSize

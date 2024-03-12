@@ -1,4 +1,5 @@
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.ImageBitmap
 import platform.UIKit.UIDevice
 
 class IOSPlatform : Platform {
@@ -13,7 +14,14 @@ actual fun VideoPlayer(url: String) {
     // Platform-specific implementation here
 }
 
+actual class LocalVideoDataSource {
+    actual suspend fun getVideoList(): List<data.source.local.model.VideoEntity>? {
+        TODO("Not yet implemented")
+    }
+
+}
+
 @Composable
-actual fun getVideoFromMediaStore(): String? {
-    return null
+actual fun getVideoThumbnail(videoUri: String): ImageBitmap? {
+    TODO("Not yet implemented")
 }

@@ -1,6 +1,5 @@
 package presentation.ui.home
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -31,8 +30,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
-import presentation.ui.offline.OffLineMovieScreen
-import presentation.ui.online.OnlineMoviesScreen
+import presentation.ui.offline.OffLineVideoScreen
+import presentation.ui.online.OnlineVideoScreen
 
 class HomeScreen : Screen {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -40,26 +39,22 @@ class HomeScreen : Screen {
     override fun Content() {
         val homeViewModel = getScreenModel<HomeViewModel>()
         val homeState = homeViewModel.homeState.collectAsState().value
-        Navigator(OnlineMoviesScreen()) { navigator ->
+        Navigator(OnlineVideoScreen()) { navigator ->
             Scaffold(bottomBar = {
-                AnimatedVisibility(visible = homeState.isVisibleAppBar) {
-                    BottomNavigationBar(navigator, homeViewModel)
-                }
+                BottomNavigationBar(navigator, homeViewModel)
             }, topBar = {
-                AnimatedVisibility(visible = homeState.isVisibleAppBar) {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                text = if (homeState.isCurrentOnlineScreen) "Online"
-                                else "Offline", fontSize = 20.sp
-                            )
-                        },
-                        modifier = Modifier.shadow(2.dp),
-                        colors = TopAppBarDefaults.smallTopAppBarColors(
-                            MaterialTheme.colorScheme.inverseOnSurface
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = if (homeState.isCurrentOnlineScreen) "Online"
+                            else "Offline", fontSize = 20.sp
                         )
+                    },
+                    modifier = Modifier.shadow(2.dp),
+                    colors = TopAppBarDefaults.smallTopAppBarColors(
+                        MaterialTheme.colorScheme.inverseOnSurface
                     )
-                }
+                )
             }) {
                 Box(
                     modifier = Modifier.fillMaxSize().padding(it)
@@ -96,13 +91,13 @@ fun BottomNavigationBar(
                     when (selected.intValue) {
                         0 -> {
                             navigator.pop()
-                            navigator.push(OnlineMoviesScreen())
+                            navigator.push(OnlineVideoScreen())
                             homeViewModel.changePage(true)
                         }
 
                         1 -> {
                             navigator.pop()
-                            navigator.push(OffLineMovieScreen())
+                            navigator.push(OffLineVideoScreen())
                             homeViewModel.changePage(false)
                         }
                     }
