@@ -58,7 +58,7 @@ fun appModule() = module {
 
     single { HomeViewModel() }
 
-    single { OnlineVideoViewModel(get()) }
+    single { OnlineVideoViewModel(get(), get()) }
 
     single { OfflineVideosViewModel(get()) }
 }

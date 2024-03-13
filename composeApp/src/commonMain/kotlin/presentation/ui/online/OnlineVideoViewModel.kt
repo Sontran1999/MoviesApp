@@ -1,5 +1,6 @@
 package presentation.ui.online
 
+import NetworkManager
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import domain.usecase.GetVideosOnline
@@ -11,13 +12,22 @@ import kotlinx.coroutines.launch
 import util.Resource
 
 class OnlineVideoViewModel(
-    private val getVideosOnline: GetVideosOnline
+    private val getVideosOnline: GetVideosOnline,
+    private val networkManager: NetworkManager
 ) : ScreenModel {
     private var _onlineVideoState = MutableStateFlow(OnlineVideoState())
     val onlineMovieState = _onlineVideoState.asStateFlow()
 
     init {
-        loadOnlineVideos()
+        checkNetwork()
+    }
+
+    private fun checkNetwork() {
+        if (!networkManager.isConnected()) {
+            _onlineVideoState.update { it.copy(isLoading = true) }
+        } else {
+            loadOnlineVideos()
+        }
     }
 
     private fun loadOnlineVideos() {

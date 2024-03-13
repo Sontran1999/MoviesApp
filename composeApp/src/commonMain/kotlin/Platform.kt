@@ -18,3 +18,7 @@ expect class LocalVideoDataSource {
 
 @Composable
 expect fun getVideoThumbnail(videoUri: String): ImageBitmap?
+
+expect class NetworkManager {
+    fun isConnected(): Boolean
+}

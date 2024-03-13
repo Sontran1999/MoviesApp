@@ -1,6 +1,6 @@
 package domain.model
 
-data class VideoMedia (
+data class VideoMedia(
     val id: Long,
     val name: String,
     val url: String,

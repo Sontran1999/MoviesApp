@@ -1,9 +1,6 @@
 package org.example.project
 
 import android.app.PictureInPictureParams
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.os.Build
@@ -23,12 +20,7 @@ import presentation.ui.home.HomeScreen
 class MainActivity : ComponentActivity() {
 
     private lateinit var exoPlayer: ExoPlayer
-
-    class MyReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent?) {
-            println("Clicked on PIP action")
-        }
-    }
+    private lateinit var exoPlayerManager: ExoPlayerManager
 
     private val isPipSupported by lazy {
         packageManager.hasSystemFeature(
@@ -40,12 +32,19 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        exoPlayer = ExoPlayerManager.getInstance(this).exoPlayer
+        exoPlayerManager = ExoPlayerManager.getInstance(this)
+        exoPlayer = exoPlayerManager.exoPlayer
         setContent {
             Surface(
                 modifier = Modifier.fillMaxSize().navigationBarsPadding(),
             ) {
-                Navigator(HomeScreen())
+                Navigator(
+                    HomeScreen(),
+                    onBackPressed = {
+                        exoPlayerManager.closeNotificationChannel()
+                        true
+                    }
+                )
             }
         }
     }

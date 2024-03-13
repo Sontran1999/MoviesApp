@@ -9,7 +9,7 @@ import io.ktor.http.takeFrom
 fun HttpRequestBuilder.pathUrl(path: String) {
     url {
         takeFrom("${NetworkConstant.BASE_URL}$path")
-        headers{
+        headers {
             append(HttpHeaders.Accept, "application/json")
             append(HttpHeaders.ContentType, "text/plain")
             append("Authorization", NetworkConstant.AUTH)

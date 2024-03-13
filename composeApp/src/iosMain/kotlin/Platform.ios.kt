@@ -25,3 +25,9 @@ actual class LocalVideoDataSource {
 actual fun getVideoThumbnail(videoUri: String): ImageBitmap? {
     TODO("Not yet implemented")
 }
+
+actual class NetworkManager {
+    actual fun isConnected(): Boolean {
+        TODO("Not yet implemented")
+    }
+}

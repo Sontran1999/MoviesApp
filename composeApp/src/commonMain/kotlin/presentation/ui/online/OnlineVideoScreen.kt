@@ -45,7 +45,7 @@ fun OnlineScreen(
             contentPadding = PaddingValues(vertical = 8.dp, horizontal = 4.dp)
         ) {
             items(onlineVideoState.onlineMovieList.size) { index ->
-                VideoItem(onlineVideoState.onlineMovieList[index], isOnline = true ) {
+                VideoItem(onlineVideoState.onlineMovieList[index], isOnline = true) {
                     navigator?.push(VideoScreen(it))
                 }
             }

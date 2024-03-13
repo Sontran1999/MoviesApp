@@ -1,6 +1,6 @@
 package data.source.local.model
 
-data class VideoEntity (
+data class VideoEntity(
     val id: Long,
     val name: String,
     val url: String,

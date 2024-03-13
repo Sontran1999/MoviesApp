@@ -17,6 +17,7 @@ class OfflineVideosViewModel(private val getVideosOffline: GetVideosOffline) : S
     init {
         loadOfflineVideos()
     }
+
     private fun loadOfflineVideos() {
         screenModelScope.launch {
             _offlineVideoState.update { it.copy(isLoading = true) }
@@ -26,8 +27,7 @@ class OfflineVideosViewModel(private val getVideosOffline: GetVideosOffline) : S
                         result.data?.let { videoList ->
                             _offlineVideoState.update {
                                 it.copy(
-                                    offlineMovieList = videoList,
-                                    isLoading = false
+                                    offlineMovieList = videoList, isLoading = false
                                 )
                             }
                         }
